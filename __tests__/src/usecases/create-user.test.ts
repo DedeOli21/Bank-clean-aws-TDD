@@ -9,23 +9,25 @@ describe('Create user', () => {
     const users: UserData[] = []
     const repo: UserRepository = new InMemoryUserRepository(users)
     const usecase: CreateUser = new CreateUser(repo)
-    const userId = 'any_user_id'
+    const userId = 'user_id'
     const email = 'any@email.com'
     const password = 'valid_password'
-    const user = User.create({ userId, email, password }).value as User
-    const response = await usecase.perform(user)
-    expect(response.userId).toBe(userId)
+    const response = await usecase.perform({ userId, email, password })
+    const user = repo.findUserByUserId(userId)
+    expect((await user).userId).toBe(userId)
+    expect(response.value).toStrictEqual({ userId, email, password })
   })
 
   test('Should not create user without UserId data', async () => {
     const users: UserData[] = []
     const repo: UserRepository = new InMemoryUserRepository(users)
     const usecase: CreateUser = new CreateUser(repo)
-    const userId = null
+    const invalidUserId = ''
     const email = 'any@email.com'
     const password = 'valid_password'
-    const user = User.create({ userId, email, password }).value as User
-    const response = await usecase.perform(user)
-    expect(response).toBe('UserId is required')
+    const response = (await usecase.perform({ userId: invalidUserId, email, password })).value as Error
+    const user = await repo.findUserByUserId(invalidUserId)
+    expect(user).toBeNull()
+    expect(response.name).toEqual('InvalidUserIdError')
   })
 })
