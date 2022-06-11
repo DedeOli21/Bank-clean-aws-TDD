@@ -4,8 +4,8 @@ import { Either, left, right } from '../shared/either'
 import { InvalidUserIdError } from './errors/invalid-user-id-error'
 
 export class User {
-  public readonly email: Email
   public readonly userId: UserId
+  public readonly email: Email
   public readonly password: Password
 
   private constructor (userId: UserId, email: Email, password: Password) {
@@ -16,7 +16,9 @@ export class User {
 
   public static create (userData: UserData): Either<InvalidUserIdError, User> {
     const userIdOrError = UserId.create(userData.userId)
-    if (userIdOrError.isLeft()) return left(userIdOrError.value)
+    if (userIdOrError.isLeft()) {
+      return left(userIdOrError.value)
+    }
     const EmailOrError = Email.create(userData.email)
     const HashOrError = Password.create(userData.password)
 

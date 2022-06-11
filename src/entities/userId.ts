@@ -9,19 +9,14 @@ export class UserId {
   }
 
   public static create (userId: string): Either<InvalidUserIdError, UserId> {
-    if (UserId.validate(userId)) {
-      return right(new UserId(userId))
-    }
+    if (!UserId.validate(userId)) return left(new InvalidUserIdError(userId))
 
-    return left(new InvalidUserIdError(userId))
+    return right(new UserId(userId))
   }
 
   public static validate (userId: string): boolean {
     if (!userId) return false
-
-    if (userId.length === 0 || userId.length === undefined || userId.length) {
-      return false
-    }
+    if (userId.trim().length < 2 || userId.trim().length > 256) return false
 
     return true
   }

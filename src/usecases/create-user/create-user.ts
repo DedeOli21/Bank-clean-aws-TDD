@@ -2,6 +2,8 @@ import { UserRepository } from './ports/user-repository'
 import { UserData } from './user-data'
 import { User } from '../../entities'
 import { UseCase } from '../ports/use-case'
+import { Either, left, right } from '@/shared'
+import { InvalidUserIdError } from '@/entities/errors'
 
 export class CreateUser implements UseCase {
   private readonly userRepo: UserRepository
@@ -10,15 +12,17 @@ export class CreateUser implements UseCase {
     this.userRepo = userRepo
   }
 
-  public async perform (request: User): Promise<UserData> {
-    const userId = request.userId.value
-    const email = request.email.value
-    const password = request.password.value
-    const userData = { userId, email, password }
+  public async perform (request: UserData): Promise<Either<InvalidUserIdError, UserData>> {
+    const userOrError: Either<InvalidUserIdError, User> = User.create(request)
 
-    if (!(await this.userRepo.exists(userData))) {
-      await this.userRepo.add(userData)
+    if (userOrError.isLeft()) {
+      return left(userOrError.value)
     }
-    return userData
+
+    if (!(await this.userRepo.exists(request))) {
+      await this.userRepo.add(request)
+    }
+
+    return right(request)
   }
 }
