@@ -1,6 +1,6 @@
 import { UserRepository } from './ports/user-repository'
 import { UserData } from './user-data'
-import { User } from './user'
+import { User } from '../../entities'
 import { UseCase } from '../ports/use-case'
 
 export class CreateUser implements UseCase {
