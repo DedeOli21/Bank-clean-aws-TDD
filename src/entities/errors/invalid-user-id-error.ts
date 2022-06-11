@@ -1,6 +1,6 @@
 export class InvalidUserIdError extends Error {
-  public readonly userId = 'InvalidUserIdError'
+  public readonly name = 'InvalidUserIdError'
   constructor (userId: string) {
-    super('Invalid nuserIdame: ' + userId + '.')
+    super('Invalid userId: ' + userId + '.')
   }
 }
