@@ -2,7 +2,6 @@ import { UserRepository } from '@/usecases/create-user/ports/user-repository'
 import { InMemoryUserRepository } from '@/usecases/create-user/repository/in-memory-user-repository'
 import { UserData } from '@/usecases/create-user/user-data'
 import { CreateUser } from '@/usecases/create-user/create-user'
-import { User } from '@/entities'
 
 describe('Create user', () => {
   test('Should create user with valid data', async () => {
@@ -31,7 +30,7 @@ describe('Create user', () => {
     expect(response.name).toEqual('InvalidUserIdError')
   })
 
-  test("Should not create user with invalid email ", async () => { 
+  test('Should not create user with invalid email ', async () => {
     const users: UserData[] = []
     const repo: UserRepository = new InMemoryUserRepository(users)
     const usecase: CreateUser = new CreateUser(repo)
@@ -44,7 +43,7 @@ describe('Create user', () => {
     expect(response.name).toEqual('InvalidEmailError')
   })
 
-  test("Should not create user without email data", async () => { 
+  test('Should not create user without email data', async () => {
     const users: UserData[] = []
     const repo: UserRepository = new InMemoryUserRepository(users)
     const usecase: CreateUser = new CreateUser(repo)
@@ -56,7 +55,7 @@ describe('Create user', () => {
     expect(response.name).toEqual('InvalidEmailError')
   })
 
-  test('Should not create user with email over 320 chars', async () => { 
+  test('Should not create user with email over 320 chars', async () => {
     const users: UserData[] = []
     const repo: UserRepository = new InMemoryUserRepository(users)
     const usecase: CreateUser = new CreateUser(repo)
@@ -70,7 +69,7 @@ describe('Create user', () => {
     expect(response.name).toEqual('InvalidEmailError')
   })
 
-  test('Should not create user with local part over 320 chars', async () => { 
+  test('Should not create user with local part over 320 chars', async () => {
     const users: UserData[] = []
     const repo: UserRepository = new InMemoryUserRepository(users)
     const usecase: CreateUser = new CreateUser(repo)
@@ -84,7 +83,7 @@ describe('Create user', () => {
     expect(response.name).toEqual('InvalidEmailError')
   })
 
-  test('Should not create user with local part over 256 chars', async () => { 
+  test('Should not create user with local part over 256 chars', async () => {
     const users: UserData[] = []
     const repo: UserRepository = new InMemoryUserRepository(users)
     const usecase: CreateUser = new CreateUser(repo)
@@ -98,7 +97,7 @@ describe('Create user', () => {
     expect(response.name).toEqual('InvalidEmailError')
   })
 
-  test('Should not create user without password data', async () => { 
+  test('Should not create user without password data', async () => {
     const users: UserData[] = []
     const repo: UserRepository = new InMemoryUserRepository(users)
     const usecase: CreateUser = new CreateUser(repo)
