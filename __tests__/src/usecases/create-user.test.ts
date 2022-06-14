@@ -43,4 +43,30 @@ describe('Create user', () => {
     expect(user).toBeNull()
     expect(response.name).toEqual('InvalidEmailError')
   })
+
+  test("Should not create user without email data", async () => { 
+    const users: UserData[] = []
+    const repo: UserRepository = new InMemoryUserRepository(users)
+    const usecase: CreateUser = new CreateUser(repo)
+    const userId = 'user_id'
+    const password = 'valid_password'
+    const response = (await usecase.perform({ userId, email: null, password })).value as Error
+    const user = await repo.findUserByUserId(userId)
+    expect(user).toBeNull()
+    expect(response.name).toEqual('InvalidEmailError')
+  })
+
+  test('Should not create user with email over 320 chars', async () => { 
+    const users: UserData[] = []
+    const repo: UserRepository = new InMemoryUserRepository(users)
+    const usecase: CreateUser = new CreateUser(repo)
+    const INVALID_LENGHT_EMAIL = 321
+    const userId = 'user_id'
+    const invalidEmail = 'invalid_email@email.com'.repeat(INVALID_LENGHT_EMAIL)
+    const password = 'valid_password'
+    const response = (await usecase.perform({ userId, email: invalidEmail, password })).value as Error
+    const user = await repo.findUserByUserId(userId)
+    expect(user).toBeNull()
+    expect(response.name).toEqual('InvalidEmailError')
+  })
 })
