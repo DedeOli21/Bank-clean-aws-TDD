@@ -69,4 +69,18 @@ describe('Create user', () => {
     expect(user).toBeNull()
     expect(response.name).toEqual('InvalidEmailError')
   })
+
+  test('Should not create user with local part over 320 chars', async () => { 
+    const users: UserData[] = []
+    const repo: UserRepository = new InMemoryUserRepository(users)
+    const usecase: CreateUser = new CreateUser(repo)
+    const INVALID_LOCAL_PART = 65
+    const userId = 'user_id'
+    const invalidEmail = 'invalidEmail'.repeat(INVALID_LOCAL_PART) + '@email.com'
+    const password = 'valid_password'
+    const response = (await usecase.perform({ userId, email: invalidEmail, password })).value as Error
+    const user = await repo.findUserByUserId(userId)
+    expect(user).toBeNull()
+    expect(response.name).toEqual('InvalidEmailError')
+  })
 })
