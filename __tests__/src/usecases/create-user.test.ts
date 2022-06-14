@@ -30,4 +30,17 @@ describe('Create user', () => {
     expect(user).toBeNull()
     expect(response.name).toEqual('InvalidUserIdError')
   })
+
+  test("Should not create user with invalid email ", async () => { 
+    const users: UserData[] = []
+    const repo: UserRepository = new InMemoryUserRepository(users)
+    const usecase: CreateUser = new CreateUser(repo)
+    const userId = 'user_id'
+    const invalidEmail = 'invalid_email'
+    const password = 'valid_password'
+    const response = (await usecase.perform({ userId, email: invalidEmail, password })).value as Error
+    const user = await repo.findUserByUserId(userId)
+    expect(user).toBeNull()
+    expect(response.name).toEqual('InvalidEmailError')
+  })
 })
