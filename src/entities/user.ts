@@ -2,7 +2,7 @@ import { UserData } from '../usecases/create-user/user-data'
 import { Email, Password, UserId } from '../entities'
 import { Either, left, right } from '../shared/either'
 import { InvalidUserIdError } from './errors/invalid-user-id-error'
-import { InvalidEmailError } from './errors'
+import { InvalidEmailError, InvalidPasswordError } from './errors'
 
 export class User {
   public readonly userId: UserId
@@ -15,7 +15,7 @@ export class User {
     this.password = password
   }
 
-  public static create (userData: UserData): Either<InvalidUserIdError | InvalidEmailError, User> {
+  public static create (userData: UserData): Either<InvalidUserIdError | InvalidEmailError | InvalidPasswordError, User> {
     const userIdOrError = UserId.create(userData.userId)
     if (userIdOrError.isLeft()) {
       return left(userIdOrError.value)
@@ -25,7 +25,9 @@ export class User {
       return left(EmailOrError.value)
     }
     const HashOrError = Password.create(userData.password)
-
+    if (HashOrError.isLeft()) {
+      return left(HashOrError.value)
+    }
     const userId: UserId = userIdOrError.value as UserId
     const email: Email = EmailOrError.value as Email
     const password: Password = HashOrError.value as Password

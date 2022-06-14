@@ -3,7 +3,7 @@ import { UserData } from './user-data'
 import { User } from '../../entities'
 import { UseCase } from '../ports/use-case'
 import { Either, left, right } from '@/shared'
-import { InvalidEmailError, InvalidUserIdError } from '@/entities/errors'
+import { InvalidEmailError, InvalidPasswordError, InvalidUserIdError } from '@/entities/errors'
 
 export class CreateUser implements UseCase {
   private readonly userRepo: UserRepository
@@ -12,8 +12,8 @@ export class CreateUser implements UseCase {
     this.userRepo = userRepo
   }
 
-  public async perform (request: UserData): Promise<Either<InvalidUserIdError | InvalidEmailError, UserData>> {
-    const userOrError: Either<InvalidUserIdError | InvalidEmailError, User> = User.create(request)
+  public async perform (request: UserData): Promise<Either<InvalidUserIdError | InvalidEmailError | InvalidPasswordError, UserData>> {
+    const userOrError: Either<InvalidUserIdError | InvalidEmailError | InvalidPasswordError, User> = User.create(request)
 
     if (userOrError.isLeft()) {
       return left(userOrError.value)
